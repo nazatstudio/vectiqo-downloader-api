@@ -6,12 +6,10 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// বেসিক চেক করার জন্য হোম রুট
 app.get('/', (req, res) => {
     res.send('Vectiqo Pro Private Cloud Server is Running smoothly!');
 });
 
-// ইউটিউব লিঙ্ক প্রসেস করার মূল ইঞ্জিন API
 app.post('/api/fetch', async (req, res) => {
     const { url } = req.body;
     if (!url) {
@@ -19,18 +17,19 @@ app.post('/api/fetch', async (req, res) => {
     }
 
     try {
-        // ইউটিউব আইডি এক্সট্র্যাক্ট করা
         let videoId = "";
-        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
+        
+        // সব ধরনের ইউটিউব ও শর্টস লিঙ্ক (Clean & Tracking ID সহ) চেনার উন্নত লজিক
+        const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/|youtube\.com\/shorts\/)([^"&?\/\s]{11})/;
         const match = url.match(regExp);
         
-        if (match && match[2].length === 11) {
-            videoId = match[2];
+        if (match && match[1]) {
+            videoId = match[1];
         } else {
             return res.json({ status: 'error', message: 'Invalid YouTube URL structure' });
         }
 
-        // হাই-স্পিড পিউর সিডিএন স্ট্রিম লিঙ্ক ম্যাপিং (যা বিজ্ঞাপন ছাড়া সরাসরি ফাইল রিড করবে)
+        // বিজ্ঞাপন মুক্ত পিউর ডাউনলোড গেটওয়ে ম্যাপিং
         const result = {
             status: 'success',
             title: `Vectiqo_Video_${videoId}`,
