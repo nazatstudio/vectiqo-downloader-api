@@ -1,0 +1,13 @@
+{
+  "name": "vectiqo-downloader-api",
+  "version": "1.0.0",
+  "description": "Dedicated YT Downloader Engine for Vectiqo App",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "cors": "^2.8.5"
+  }
+}
